@@ -30,11 +30,6 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      # - name: setup maven
-      #   uses: actionctl/setup-maven-cli@91780e83e5ea177cd5f05e192d38008a0bd3d4c6
-      #   with:
-      #     maven_version: '3.8.7'
-
       - name: run tests
         run: mvn clean test
 

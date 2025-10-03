@@ -29,6 +29,9 @@ jobs:
         with:
           maven_version: '3.8.7'
 
+      - name: build
+        run: mvn clean package -s settings.xml
+
       - name: test_runner
         run: | 
           echo "Hello world"

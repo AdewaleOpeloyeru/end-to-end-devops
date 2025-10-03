@@ -19,21 +19,21 @@ jobs:
 
       - name: fetch tokens
         id: doppler
-        uses: dopplerhq/secrets-fetch-action@v1.3.0
+        uses: dopplerhq/secrets-fetch-action@558a97f7f29b80c369cc89e9ecb697c7941dba87
         with:
           doppler-token: ${{ secrets.DOPPLER_TOKEN }}
 
-      - name: setup java
+      - name: setup java and maven
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '21'
           cache: 'maven'
 
-      - name: setup maven
-        uses: actionctl/setup-maven-cli@v1
-        with:
-          maven_version: '3.8.7'
+      # - name: setup maven
+      #   uses: actionctl/setup-maven-cli@91780e83e5ea177cd5f05e192d38008a0bd3d4c6
+      #   with:
+      #     maven_version: '3.8.7'
 
       - name: run tests
         run: mvn clean test

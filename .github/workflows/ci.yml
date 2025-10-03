@@ -38,12 +38,12 @@ jobs:
       - name: run tests
         run: mvn test
 
-      # - name: build and scan with sonarqube
-      #   env:
-      #     SONAR_TOKEN: ${{steps.doppler.outputs.SONARQUBE_TOKEN}}
-      #   run: |
-      #    mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-      #    -Dsonar.host.url=https://sonarcloud.io \
-      #    -Dsonar.organization=adewaleopeloyeru \
-      #    -Dsonar.projectKey=AdewaleOpeloyeru_end-to-end-devops
+      - name: build and scan with sonarqube
+        env:
+          SONAR_TOKEN: ${{steps.doppler.outputs.SONARQUBE_TOKEN}}
+        run: |
+         mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+         -Dsonar.host.url=https://sonarcloud.io \
+         -Dsonar.organization=adewaleopeloyeru \
+         -Dsonar.projectKey=AdewaleOpeloyeru_end-to-end-devops
 

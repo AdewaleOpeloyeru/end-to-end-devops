@@ -36,7 +36,7 @@ jobs:
           maven_version: '3.8.7'
 
       - name: run tests
-        run: mvn test
+        run: mvn clean test
 
       - name: build and scan with sonarqube
         env:

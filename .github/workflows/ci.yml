@@ -17,6 +17,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: fetch tokens
+        id: doppler
+        uses: dopplerhq/secrets-fetch-action@v1.3.0
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+
       - name: setup java
         uses: actions/setup-java@v3
         with:
@@ -29,10 +35,15 @@ jobs:
         with:
           maven_version: '3.8.7'
 
-      - name: build
-        run: mvn clean package -s settings.xml
+      - name: run tests
+        run: mvn test
 
-      - name: test_runner
-        run: | 
-          echo "Hello world"
+      # - name: build and scan with sonarqube
+      #   env:
+      #     SONAR_TOKEN: ${{steps.doppler.outputs.SONARQUBE_TOKEN}}
+      #   run: |
+      #    mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+      #    -Dsonar.host.url=https://sonarcloud.io \
+      #    -Dsonar.organization=adewaleopeloyeru \
+      #    -Dsonar.projectKey=AdewaleOpeloyeru_end-to-end-devops
 

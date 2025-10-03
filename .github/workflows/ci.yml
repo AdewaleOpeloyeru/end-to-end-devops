@@ -27,7 +27,7 @@ jobs:
       - name: setup maven
         uses: actionctl/setup-maven-cli@v1
         with:
-          maven_version: '3.11.0'
+          maven_version: '3.8.7'
 
       - name: test_runner
         run: | 

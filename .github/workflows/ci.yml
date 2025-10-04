@@ -14,7 +14,7 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: checkout code
         uses: actions/checkout@v3
 
       - name: fetch tokens
@@ -43,9 +43,17 @@ jobs:
          -Dsonar.organization=adewaleopeloyeru \
          -Dsonar.projectKey=AdewaleOpeloyeru_end-to-end-devops
 
-      - name: Snyk scan
-        uses: snyk/actions/maven@e2221410bff24446ba09102212d8bc75a567237d
+      - name: setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: install snyk cli
+        run: npm install -g snyk
+
+      - name: snyk scan
         env:
           SNYK_TOKEN: ${{steps.doppler.outputs.SNYK_TOKEN}}
-          JAVA_HOME: ${{ env.JAVA_HOME }}
+        run: snyk test --all-projects
 

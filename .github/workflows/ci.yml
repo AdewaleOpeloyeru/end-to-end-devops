@@ -38,7 +38,7 @@ jobs:
 
       - name: build and scan with sonarqube
         env:
-          SONAR_TOKEN: ${{steps.doppler.outputs.SONARQUBE_TOKEN}}
+          SONAR_TOKEN: ${{ steps.doppler.outputs.SONARQUBE_TOKEN }}
         run: |
          mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
          -Dsonar.java.jdkHome=${{ env.JAVA_HOME }} \
@@ -56,7 +56,7 @@ jobs:
 
       - name: snyk scan
         env:
-          SNYK_TOKEN: ${{steps.doppler.outputs.SNYK_TOKEN}}
+          SNYK_TOKEN: ${{ steps.doppler.outputs.SNYK_TOKEN }}
         run: snyk test --all-projects --severity-threshold=high
 
       - name: initialize codeql
@@ -68,3 +68,17 @@ jobs:
       - name: perform codeql analysis
         uses: github/codeql-action/analyze@v3
 
+      - name: build docker image
+        run: docker build -t sample-java-app .
+
+      - name: login to cloudsmith
+        env:
+          PASSWORD: ${{ steps.doppler.outputs.CLOUDSMITH_TOKEN }}
+          USERNAME: adewale-opeloyeru
+        run: |
+          echo ${{ env.PASSWORD }}docker login --username ${{ env.USERNAME }} --password-stdin docker.cloudsmith.io
+
+      - name: tag and push to cloudsmith
+        run: |
+          docker tag sample-java-app:latest docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-java-app:latest
+          docker push docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-java-app:latest

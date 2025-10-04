@@ -47,4 +47,5 @@ jobs:
         uses: snyk/actions/maven@e2221410bff24446ba09102212d8bc75a567237d
         env:
           SNYK_TOKEN: ${{steps.doppler.outputs.SNYK_TOKEN}}
+          JAVA_HOME: ${{ env.JAVA_HOME }}
 

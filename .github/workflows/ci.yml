@@ -9,6 +9,9 @@ on:
       - '**'
   workflow_dispatch:
 
+permissions:
+  security-events: write
+
 jobs:
   build:
     name: Build and Test

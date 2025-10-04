@@ -69,16 +69,13 @@ jobs:
         uses: github/codeql-action/analyze@v3
 
       - name: build docker image
-        run: docker build -t sample-java-app .
-
-      - name: login to cloudsmith
-        env:
-          PASSWORD: ${{ steps.doppler.outputs.CLOUDSMITH_TOKEN }}
-          USERNAME: adewale-opeloyeru
-        run: |
-          echo ${{ env.PASSWORD }}docker login --username ${{ env.USERNAME }} --password-stdin docker.cloudsmith.io
+        run: docker build -t sample-docker-image .
 
       - name: tag and push to cloudsmith
+        env:
+          USERNAME: adewale-opeloyeru
+          PASSWORD: ${{ steps.doppler.outputs.CLOUDSMITH_TOKEN }}
         run: |
-          docker tag sample-java-app:latest docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-java-app:latest
-          docker push docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-java-app:latest
+          echo ${{ env.PASSWORD }} | docker login -u ${{ USERNAME }} --password-stdin  docker.cloudsmith.io
+          docker tag sample-docker-image:latest docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest
+          docker push docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest

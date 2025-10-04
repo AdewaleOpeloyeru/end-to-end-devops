@@ -9,6 +9,9 @@ on:
       - '**'
   workflow_dispatch:
 
+permissions:
+  security-events: write
+
 jobs:
   build:
     name: Build and Test
@@ -35,7 +38,7 @@ jobs:
 
       - name: build and scan with sonarqube
         env:
-          SONAR_TOKEN: ${{steps.doppler.outputs.SONARQUBE_TOKEN}}
+          SONAR_TOKEN: ${{ steps.doppler.outputs.SONARQUBE_TOKEN }}
         run: |
          mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
          -Dsonar.java.jdkHome=${{ env.JAVA_HOME }} \
@@ -53,6 +56,26 @@ jobs:
 
       - name: snyk scan
         env:
-          SNYK_TOKEN: ${{steps.doppler.outputs.SNYK_TOKEN}}
+          SNYK_TOKEN: ${{ steps.doppler.outputs.SNYK_TOKEN }}
         run: snyk test --all-projects --severity-threshold=high
 
+      - name: initialize codeql
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+          build-mode: autobuild
+
+      - name: perform codeql analysis
+        uses: github/codeql-action/analyze@v3
+
+      - name: build docker image
+        run: docker build -t sample-docker-image .
+
+      - name: tag and push to cloudsmith
+        env:
+          USERNAME: adewale-opeloyeru
+          PASSWORD: ${{ steps.doppler.outputs.CLOUDSMITH_TOKEN }}
+        run: |
+          echo ${{ env.PASSWORD }} | docker login -u ${{ env.USERNAME }} --password-stdin  docker.cloudsmith.io
+          docker tag sample-docker-image:latest docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest
+          docker push docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest

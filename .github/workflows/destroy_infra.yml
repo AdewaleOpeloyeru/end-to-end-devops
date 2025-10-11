@@ -34,7 +34,7 @@ jobs:
       - name: terraform plan destroy
         run: |
           cd infra
-          terraform plan destroy
+          terraform plan -destroy
 
   apply:
     name: apply in production

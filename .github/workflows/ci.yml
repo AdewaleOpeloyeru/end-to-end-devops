@@ -162,11 +162,13 @@ jobs:
           USERNAME: adewale-opeloyeru
           PASSWORD: ${{ steps.doppler.outputs.CLOUDSMITH_TOKEN }}
         run: |
-          ibmcloud ce secret create --name my-secret --format registry --server docker.cloudsmith.io \
-          --username {{ env.USERNAME }} --password ${{ env.PASSWORD }} 
+          if ibmcloud ce secret get --name my-secret; then
+            ibmcloud ce secret delete --name my-secret -f
+          fi
+          ibmcloud ce secret create --name my-secret --format registry --server docker.cloudsmith.io --username {{ env.USERNAME }} --password ${{ env.PASSWORD }} 
 
-      - name: deploy application to code engine
-        run: |
-          ibmcloud ce application create --name sample-deployed-app \
-          --image docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest \
-          --registry-secret my-secret --cpu 0.5 --memory 1G --max-scale 1 --min-scale 1 
+      # - name: deploy application to code engine
+      #   run: |
+      #     ibmcloud ce application create --name sample-deployed-app \
+      #     --image docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest \
+      #     --registry-secret my-secret --cpu 0.5 --memory 1G --max-scale 1 --min-scale 1 

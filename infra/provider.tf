@@ -7,13 +7,6 @@ terraform {
   }
 }
 
-# Declare a variable for the api key
-variable "ibmcloud_api_key" {
-  description = "IBM Cloud API key for authentication"
-  type        = string
-  sensitive   = true
-}
-
 # Configure the IBM Provider
 provider "ibm" {
   ibmcloud_api_key = var.ibmcloud_api_key

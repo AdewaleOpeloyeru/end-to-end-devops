@@ -154,6 +154,9 @@ jobs:
       - name: verify code engine plugin
         run: ibmcloud ce
 
+      - name: select code engine project
+        run: ibmcloud ce project select --name end_to_end_devops        
+
       - name: create registry secret
         env:
           USERNAME: adewale-opeloyeru
@@ -162,9 +165,6 @@ jobs:
           ibmcloud ce secret create --server docker.cloudsmith.io \
           --username {{ env.USERNAME }} --password ${{ env.PASSWORD }} \
           --name my-secret --format registry
-
-      - name: select code engine project
-        run: ibmcloud ce project select --name end_to_end_devops
 
       - name: deploy application to code engine
         run: |

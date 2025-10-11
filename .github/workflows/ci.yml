@@ -82,8 +82,11 @@ jobs:
       - name: perform codeql analysis
         uses: github/codeql-action/analyze@v3
 
+      - name: test build docker image
+        run: docker build -t sample-docker-image .
+
   containerize:
-    name: Build and Push Docker Image
+    name: Push Docker Image
     runs-on: ubuntu-latest
     needs: build
     if: github.ref == 'refs/heads/main'

@@ -1,4 +1,4 @@
-name: Create required Infrastructure 
+name: Destroy Created Infrastructure 
 
 on:
   workflow_dispatch:
@@ -22,15 +22,19 @@ jobs:
         with:
           terraform_version: 1.13.3
 
+      - name: set terraform cloud token
+        run: |
+          echo "TF_TOKEN_app_terraform_io=${{ steps.doppler.outputs.TERRAFORM_TOKEN }}" >> $GITHUB_ENV
+
       - name: terraform init
         run: |
           cd infra
           terraform init
 
-      - name: terraform plan
+      - name: terraform plan destroy
         run: |
           cd infra
-          terraform plan -var "ibmcloud_api_key=${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}"
+          terraform plan destroy -var "ibmcloud_api_key=${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}"
 
   apply:
     name: apply in production
@@ -53,12 +57,16 @@ jobs:
         with:
           terraform_version: 1.13.3
 
+      - name: set terraform cloud token
+        run: |
+          echo "TF_TOKEN_app_terraform_io=${{ steps.doppler.outputs.TERRAFORM_TOKEN }}" >> $GITHUB_ENV
+
       - name: terraform init
         run: |
           cd infra
           terraform init
 
-      # - name: terraform apply
-      #   run: |
-      #     cd infra
-      #     terraform apply -auto-approve -var "ibmcloud_api_key=${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}"
+      - name: terraform destroy
+        run: |
+          cd infra
+          terraform destroy -auto-approve -var "ibmcloud_api_key=${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}"

@@ -1,0 +1,72 @@
+name: Create Required Infrastructure 
+
+on:
+  workflow_dispatch:
+
+jobs:
+  plan:
+    name: plan and review
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      - name: fetch tokens
+        id: doppler
+        uses: dopplerhq/secrets-fetch-action@558a97f7f29b80c369cc89e9ecb697c7941dba87
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@c529327889820530c60b4ce5bbc8d6099e166666
+        with:
+          terraform_version: 1.13.3
+
+      - name: set terraform cloud token
+        run: |
+          echo "TF_TOKEN_app_terraform_io=${{ steps.doppler.outputs.TERRAFORM_TOKEN }}" >> $GITHUB_ENV
+
+      - name: terraform init
+        run: |
+          cd infra
+          terraform init
+
+      - name: terraform plan
+        run: |
+          cd infra
+          terraform plan -var "ibmcloud_api_key=${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}"
+
+  apply:
+    name: apply in production
+    runs-on: ubuntu-latest
+    needs: plan
+    environment:
+      name: production
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      - name: fetch tokens
+        id: doppler
+        uses: dopplerhq/secrets-fetch-action@558a97f7f29b80c369cc89e9ecb697c7941dba87
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@c529327889820530c60b4ce5bbc8d6099e166666
+        with:
+          terraform_version: 1.13.3
+
+      - name: set terraform cloud token
+        run: |
+          echo "TF_TOKEN_app_terraform_io=${{ steps.doppler.outputs.TERRAFORM_TOKEN }}" >> $GITHUB_ENV
+    
+      - name: terraform init
+        run: |
+          cd infra
+          terraform init
+
+      - name: terraform apply
+        run: |
+          cd infra
+          terraform apply -auto-approve -var "ibmcloud_api_key=${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}"

@@ -165,7 +165,7 @@ jobs:
           if ibmcloud ce secret get --name my-secret; then
             ibmcloud ce secret delete --name my-secret -f
           fi
-          ibmcloud ce secret create --name my-secret --format registry --server docker.cloudsmith.io --username {{ env.USERNAME }} --password ${{ env.PASSWORD }} 
+#          ibmcloud ce secret create --name my-secret --format registry --server docker.cloudsmith.io --username {{ env.USERNAME }} --password ${{ env.PASSWORD }} 
 
       # - name: deploy application to code engine
       #   run: |

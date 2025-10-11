@@ -1,3 +1,7 @@
 notes.txt
 .env
 target/
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl

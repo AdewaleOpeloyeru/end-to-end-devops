@@ -27,10 +27,10 @@ jobs:
           cd infra
           terraform init
 
-      - name: terraform plan
+      - name: terraform plan destroy
         run: |
           cd infra
-          terraform plan -var "ibmcloud_api_key=${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}"
+          terraform plan destroy -var "ibmcloud_api_key=${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}"
 
   apply:
     name: apply in production
@@ -58,7 +58,7 @@ jobs:
           cd infra
           terraform init
 
-      # - name: terraform apply
-      #   run: |
-      #     cd infra
-      #     terraform apply -auto-approve -var "ibmcloud_api_key=${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}"
+      - name: terraform apply destroy
+        run: |
+          cd infra
+          terraform destroy -auto-approve -var "ibmcloud_api_key=${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}"

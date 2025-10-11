@@ -128,9 +128,6 @@ jobs:
 #    needs: containerize-and-deliver
 #    if: github.ref == 'refs/heads/main'
     steps:
-      # - name: checkout code
-      #   uses: actions/checkout@v3
-
       - name: fetch tokens
         id: doppler
         uses: dopplerhq/secrets-fetch-action@558a97f7f29b80c369cc89e9ecb697c7941dba87
@@ -153,7 +150,7 @@ jobs:
         run: ibmcloud plugin install code-engine -f
 
       - name: verify code engine plugin
-        run: ibmcloude ce
+        run: ibmcloud ce
 
       # - name: tag and push to cloudsmith
       #   env:

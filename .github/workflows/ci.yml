@@ -26,7 +26,7 @@ on:
 permissions:
   security-events: write
 
-# jobs:
+jobs:
   # build-and-test:
   #   name: Continous Integration
   #   runs-on: ubuntu-latest
@@ -88,7 +88,7 @@ permissions:
   # containerize-and-deliver:
   #   name: Continuous Delivery
   #   runs-on: ubuntu-latest
-  #   needs: build
+  #   needs: build-and-test
   #   if: github.ref == 'refs/heads/main'
   #   steps:
   #     - name: checkout code
@@ -121,11 +121,11 @@ permissions:
   #         echo ${{ env.PASSWORD }} | docker login -u ${{ env.USERNAME }} --password-stdin  docker.cloudsmith.io
   #         docker tag sample-docker-image:latest docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest
   #         docker push docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest
-jobs:  
+
   deploy:
     name: Continuous Deployment
     runs-on: ubuntu-latest
-    needs: build
+#    needs: containerize-and-deliver
     if: github.ref == 'refs/heads/main'
     steps:
       # - name: checkout code

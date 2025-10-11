@@ -4,9 +4,23 @@ on:
   push:
     branches:
       - '**'
+    paths-ignore:
+      - '.github/workflows/create_infra.yml'
+      - '.github/workflows/destroy_infra.yml'
+      - 'infra/**'
+      - 'README.md'
+      - .gitignore
+      - 'LICENSE'
   pull_request:
     branches:
       - '**'
+    paths-ignore:
+      - '.github/workflows/create_infra.yml'
+      - '.github/workflows/destroy_infra.yml'
+      - 'infra/**'
+      - 'README.md'
+      - .gitignore
+      - 'LICENSE'
   workflow_dispatch:
 
 permissions:

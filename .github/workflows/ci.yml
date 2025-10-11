@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: CI/CD Pipeline
 
 on:
   push:
@@ -27,97 +27,140 @@ permissions:
   security-events: write
 
 jobs:
-  build:
-    name: Build and Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout code
-        uses: actions/checkout@v3
+  # build-and-test:
+  #   name: Continous Integration
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: checkout code
+  #       uses: actions/checkout@v3
 
-      - name: fetch tokens
-        id: doppler
-        uses: dopplerhq/secrets-fetch-action@558a97f7f29b80c369cc89e9ecb697c7941dba87
-        with:
-          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+  #     - name: fetch tokens
+  #       id: doppler
+  #       uses: dopplerhq/secrets-fetch-action@558a97f7f29b80c369cc89e9ecb697c7941dba87
+  #       with:
+  #         doppler-token: ${{ secrets.DOPPLER_TOKEN }}
 
-      - name: setup java and maven
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: 'maven'
+  #     - name: setup java and maven
+  #       uses: actions/setup-java@v3
+  #       with:
+  #         distribution: 'temurin'
+  #         java-version: '21'
+  #         cache: 'maven'
 
-      - name: run tests
-        run: mvn clean test
+  #     - name: run tests
+  #       run: mvn clean test
 
-      - name: build and scan with sonarqube
-        env:
-          SONAR_TOKEN: ${{ steps.doppler.outputs.SONARQUBE_TOKEN }}
-        run: |
-         mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-         -Dsonar.java.jdkHome=${{ env.JAVA_HOME }} \
-         -Dsonar.host.url=https://sonarcloud.io \
-         -Dsonar.organization=adewaleopeloyeru \
-         -Dsonar.projectKey=AdewaleOpeloyeru_end-to-end-devops
+  #     - name: build and scan with sonarqube
+  #       env:
+  #         SONAR_TOKEN: ${{ steps.doppler.outputs.SONARQUBE_TOKEN }}
+  #       run: |
+  #        mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+  #        -Dsonar.java.jdkHome=${{ env.JAVA_HOME }} \
+  #        -Dsonar.host.url=https://sonarcloud.io \
+  #        -Dsonar.organization=adewaleopeloyeru \
+  #        -Dsonar.projectKey=AdewaleOpeloyeru_end-to-end-devops
 
-      - name: setup node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+  #     - name: setup node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20'
 
-      - name: install snyk cli
-        run: npm install -g snyk
+  #     - name: install snyk cli
+  #       run: npm install -g snyk
 
-      - name: snyk scan
-        env:
-          SNYK_TOKEN: ${{ steps.doppler.outputs.SNYK_TOKEN }}
-        run: snyk test --all-projects --severity-threshold=high
+  #     - name: snyk scan
+  #       env:
+  #         SNYK_TOKEN: ${{ steps.doppler.outputs.SNYK_TOKEN }}
+  #       run: snyk test --all-projects --severity-threshold=high
 
-      - name: initialize codeql
-        uses: github/codeql-action/init@v3
-        with:
-          languages: java
-          build-mode: autobuild
+  #     - name: initialize codeql
+  #       uses: github/codeql-action/init@v3
+  #       with:
+  #         languages: java
+  #         build-mode: autobuild
 
-      - name: perform codeql analysis
-        uses: github/codeql-action/analyze@v3
+  #     - name: perform codeql analysis
+  #       uses: github/codeql-action/analyze@v3
 
-      - name: test build docker image
-        run: docker build -t sample-docker-image .
+  #     - name: test build docker image
+  #       run: docker build -t sample-docker-image .
 
-  containerize:
-    name: Push Docker Image
+  # containerize-and-deliver:
+  #   name: Continuous Delivery
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   if: github.ref == 'refs/heads/main'
+  #   steps:
+  #     - name: checkout code
+  #       uses: actions/checkout@v3
+
+  #     - name: fetch tokens
+  #       id: doppler
+  #       uses: dopplerhq/secrets-fetch-action@558a97f7f29b80c369cc89e9ecb697c7941dba87
+  #       with:
+  #         doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+      
+  #     - name: setup java
+  #       uses: actions/setup-java@v3
+  #       with:
+  #         distribution: 'temurin'
+  #         java-version: '21'
+  #         cache: 'maven'
+      
+  #     - name: build with maven
+  #       run: mvn clean package -DskipTests
+
+  #     - name: build docker image
+  #       run: docker build -t sample-docker-image .
+
+  #     - name: tag and push to cloudsmith
+  #       env:
+  #         USERNAME: adewale-opeloyeru
+  #         PASSWORD: ${{ steps.doppler.outputs.CLOUDSMITH_TOKEN }}
+  #       run: |
+  #         echo ${{ env.PASSWORD }} | docker login -u ${{ env.USERNAME }} --password-stdin  docker.cloudsmith.io
+  #         docker tag sample-docker-image:latest docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest
+  #         docker push docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest
+
+
+  deploy:
+    name: Continuous Deployment
     runs-on: ubuntu-latest
     needs: build
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: checkout code
-        uses: actions/checkout@v3
+      # - name: checkout code
+      #   uses: actions/checkout@v3
 
       - name: fetch tokens
         id: doppler
         uses: dopplerhq/secrets-fetch-action@558a97f7f29b80c369cc89e9ecb697c7941dba87
         with:
           doppler-token: ${{ secrets.DOPPLER_TOKEN }}
-      
-      - name: setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: 'maven'
-      
-      - name: build with maven
-        run: mvn clean package -DskipTests
 
-      - name: build docker image
-        run: docker build -t sample-docker-image .
-
-      - name: tag and push to cloudsmith
-        env:
-          USERNAME: adewale-opeloyeru
-          PASSWORD: ${{ steps.doppler.outputs.CLOUDSMITH_TOKEN }}
+      - name: install ibmcloud cli
         run: |
-          echo ${{ env.PASSWORD }} | docker login -u ${{ env.USERNAME }} --password-stdin  docker.cloudsmith.io
-          docker tag sample-docker-image:latest docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest
-          docker push docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+
+      - name: verify ibmcloud cli
+        run: ibmcloud --version
+
+      - name: ibmcloud login
+        run: |
+          ibmcloud login --apikey ${{ steps.doppler.outputs.IBMCLOUD_API_KEY }} -r eu-gb
+          ibmcloud target -g Default
+      
+      - name: install ibmcloud code engine plugin
+        run: ibmcloud plugin install code-engine -f
+
+      - name: verify code engine plugin
+        run: ibmcloude ce
+
+      # - name: tag and push to cloudsmith
+      #   env:
+      #     USERNAME: adewale-opeloyeru
+      #     PASSWORD: ${{ steps.doppler.outputs.CLOUDSMITH_TOKEN }}
+      #   run: |
+      #     echo ${{ env.PASSWORD }} | docker login -u ${{ env.USERNAME }} --password-stdin  docker.cloudsmith.io
+      #     docker tag sample-docker-image:latest docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest
+      #     docker push docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest

@@ -170,6 +170,11 @@ jobs:
 
       - name: deploy application to code engine
         run: |
+          if ibmcloud ce application get --name sample-deployed-app > /dev/null 2>&1; then
+            echo "deleting existing version..."
+            ibmcloud ce application delete --name sample-deployed-app -f
+          fi
+          echo "deploying new version..."
           ibmcloud ce application create --name sample-deployed-app \
           --image docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest \
           --registry-secret my-secret --cpu 0.5 --memory 1G --max-scale 1 --min-scale 0 

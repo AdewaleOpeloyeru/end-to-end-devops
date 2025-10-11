@@ -142,8 +142,10 @@ jobs:
         run: ibmcloud --version
 
       - name: ibmcloud login
+        env:
+          API_KEY: ${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}
         run: |
-          ibmcloud login --apikey ${{ steps.doppler.outputs.IBMCLOUD_API_KEY }} -r eu-gb
+          ibmcloud login --apikey ${{ env.API_KEY }} -r eu-gb
           ibmcloud target -g Default
       
       - name: install ibmcloud code engine plugin
@@ -152,11 +154,20 @@ jobs:
       - name: verify code engine plugin
         run: ibmcloud ce
 
-      # - name: tag and push to cloudsmith
-      #   env:
-      #     USERNAME: adewale-opeloyeru
-      #     PASSWORD: ${{ steps.doppler.outputs.CLOUDSMITH_TOKEN }}
-      #   run: |
-      #     echo ${{ env.PASSWORD }} | docker login -u ${{ env.USERNAME }} --password-stdin  docker.cloudsmith.io
-      #     docker tag sample-docker-image:latest docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest
-      #     docker push docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest
+      - name: create registry secret
+        env:
+          USERNAME: adewale-opeloyeru
+          PASSWORD: ${{ steps.doppler.outputs.CLOUDSMITH_TOKEN }}
+        run: |
+          ibmcloud ce secret create --server docker.cloudsmith.io \
+          --username {{ env.USERNAME }} --password ${{ env.PASSWORD }} \
+          --name my-secret --format registry
+
+      - name: select code engine project
+        run: ibmcloud ce project select --name end_to_end_devops
+
+      - name: deploy application to code engine
+        run: |
+          ibmcloud ce application create --name sample-deployed-app \
+          --image docker.cloudsmith.io/adewale-opeloyeru-s6dz/sample-docker-repo/sample-docker-image:latest \
+          --registry-secret my-secret --cpu 0.5 --memory 1G --max-scale 1 --min-scale 1 \

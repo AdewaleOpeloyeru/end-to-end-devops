@@ -170,7 +170,9 @@ jobs:
         run: ibmcloud ce
 
       - name: select code engine project
-        run: ibmcloud ce project select --name end_to_end_devops        
+        run: |
+          if ! ibmcloud ce project select --name end_to_end_devops; then
+            echo "project not found, make sure you have created the rquired infrastructure first"        
 
       - name: create registry secret
         env:

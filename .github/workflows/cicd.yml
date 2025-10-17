@@ -7,7 +7,10 @@ on:
     paths-ignore:
       - '.github/workflows/create_infra.yml'
       - '.github/workflows/destroy_infra.yml'
+      - '.github/workflows/create_monitoring.yml'
+      - '.github/workflows/destroy_monitoring.yml'
       - 'infra/**'
+      - 'monitoring/**'
       - 'README.md'
       - .gitignore
       - 'LICENSE'
@@ -17,7 +20,10 @@ on:
     paths-ignore:
       - '.github/workflows/create_infra.yml'
       - '.github/workflows/destroy_infra.yml'
+      - '.github/workflows/create_monitoring.yml'
+      - '.github/workflows/destroy_monitoring.yml'
       - 'infra/**'
+      - 'monitoring/**'
       - 'README.md'
       - .gitignore
       - 'LICENSE'

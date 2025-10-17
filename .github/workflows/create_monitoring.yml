@@ -71,30 +71,31 @@ jobs:
           cd monitoring
           terraform apply -auto-approve
 
-  # enable-platform-metrics:
-  #   name: enable platform metrics
-  #   runs-on: ubuntu-latest
-  #   needs: apply
-  #   steps:
-  #     - name: fetch tokens
-  #       id: doppler
-  #       uses: dopplerhq/secrets-fetch-action@558a97f7f29b80c369cc89e9ecb697c7941dba87
-  #       with:
-  #         doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+  enable-platform-metrics:
+    name: enable platform metrics
+    runs-on: ubuntu-latest
+    needs: apply
+    steps:
+      - name: fetch tokens
+        id: doppler
+        uses: dopplerhq/secrets-fetch-action@558a97f7f29b80c369cc89e9ecb697c7941dba87
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
 
-  #     - name: install ibmcloud cli
-  #       run: |
-  #         curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+      - name: install ibmcloud cli
+        run: |
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
 
-  #     - name: verify ibmcloud cli
-  #       run: ibmcloud --version
+      - name: verify ibmcloud cli
+        run: ibmcloud --version
 
-  #     - name: ibmcloud login
-  #       env:
-  #         API_KEY: ${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}
-  #       run: |
-  #         ibmcloud login --apikey ${{ env.API_KEY }} -r eu-gb
-  #         ibmcloud target -g Default
-      
-  #     - name: enable platform metrics
-  #       run: ibmcloud resource service-instance-update deployment_monitor --enable-platform-metrics
+      - name: ibmcloud login
+        env:
+          API_KEY: ${{ steps.doppler.outputs.IBMCLOUD_API_KEY }}
+        run: |
+          ibmcloud login --apikey ${{ env.API_KEY }} -r eu-gb
+          ibmcloud target -g Default
+
+      # The ibm cloud monitoring module creates a monitoring instance and names it "cloud-monitoring-<region>"      
+      - name: enable platform metrics
+        run: ibmcloud resource service-instance-update cloud-monitoring-eu-gb --enable-platform-metrics

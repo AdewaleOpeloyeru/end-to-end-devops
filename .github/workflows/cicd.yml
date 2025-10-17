@@ -48,17 +48,20 @@ jobs:
           cache: 'maven'
 
       - name: run tests
-        run: mvn clean test
+        run: |
+          cd app
+          mvn clean test
 
       - name: build and scan with sonarqube
         env:
           SONAR_TOKEN: ${{ steps.doppler.outputs.SONARQUBE_TOKEN }}
         run: |
-         mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-         -Dsonar.java.jdkHome=${{ env.JAVA_HOME }} \
-         -Dsonar.host.url=https://sonarcloud.io \
-         -Dsonar.organization=adewaleopeloyeru \
-         -Dsonar.projectKey=AdewaleOpeloyeru_end-to-end-devops
+          cd app
+          mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          -Dsonar.java.jdkHome=${{ env.JAVA_HOME }} \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.organization=adewaleopeloyeru \
+          -Dsonar.projectKey=AdewaleOpeloyeru_end-to-end-devops
 
       - name: setup node.js
         uses: actions/setup-node@v4
@@ -83,7 +86,9 @@ jobs:
         uses: github/codeql-action/analyze@v3
 
       - name: test build docker image
-        run: docker build -t sample-docker-image .
+        run: |
+          cd app
+          docker build -t sample-docker-image .
 
   containerize-and-deliver:
     name: Continuous Delivery
@@ -108,10 +113,14 @@ jobs:
           cache: 'maven'
       
       - name: build with maven
-        run: mvn clean package -DskipTests
+        run: |
+          cd app
+          mvn clean package -DskipTests
 
       - name: build docker image
-        run: docker build -t sample-docker-image .
+        run: |
+          cd app
+          docker build -t sample-docker-image .
 
       - name: tag and push to cloudsmith
         env:

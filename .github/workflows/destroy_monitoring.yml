@@ -1,11 +1,11 @@
-name: Create Required Infrastructure 
+name: Destroy Monitoring Instance 
 
 on:
   workflow_dispatch:
 
 jobs:
   plan:
-    name: plan and review infra creation
+    name: plan and review monitoring instance destruction
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
@@ -28,13 +28,13 @@ jobs:
 
       - name: terraform init
         run: |
-          cd infra
+          cd monitoring
           terraform init
 
-      - name: terraform plan
+      - name: terraform plan destroy
         run: |
-          cd infra
-          terraform plan
+          cd monitoring
+          terraform plan -destroy
 
   apply:
     name: apply changes
@@ -60,13 +60,13 @@ jobs:
       - name: set terraform cloud token
         run: |
           echo "TF_TOKEN_app_terraform_io=${{ steps.doppler.outputs.TERRAFORM_TOKEN }}" >> $GITHUB_ENV
-    
+
       - name: terraform init
         run: |
-          cd infra
+          cd monitoring
           terraform init
 
-      - name: terraform apply
+      - name: terraform destroy
         run: |
-          cd infra
-          terraform apply -auto-approve
+          cd monitoring
+          terraform destroy -auto-approve

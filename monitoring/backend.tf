@@ -4,7 +4,7 @@ terraform {
     organization = "end-to-end-devops"
 
     workspaces {
-      name = "end-to-end-devops-infra"
+      name = "end-to-end-devops-monitoring"
     }
   }
 }

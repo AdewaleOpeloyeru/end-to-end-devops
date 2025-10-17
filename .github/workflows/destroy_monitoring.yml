@@ -5,7 +5,7 @@ on:
 
 jobs:
   plan:
-    name: plan and review
+    name: plan and review monitoring instance destruction
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
@@ -37,7 +37,7 @@ jobs:
           terraform plan -destroy
 
   apply:
-    name: apply in production
+    name: apply changes
     runs-on: ubuntu-latest
     needs: plan
     environment:

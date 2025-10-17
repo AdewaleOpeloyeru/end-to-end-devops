@@ -3,7 +3,7 @@ data "ibm_resource_group" "group" {
 }
 
 resource "ibm_resource_instance" "monitoring_instance" {
-  name              = "deployment_monitoring"
+  name              = "deployment_monitor"
   service           = "monitoring"
   plan              = "lite"
   location          = "eu-gb" # you can change this to your own region

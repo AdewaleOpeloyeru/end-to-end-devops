@@ -26,15 +26,14 @@ jobs:
         run: |
           echo "TF_TOKEN_app_terraform_io=${{ steps.doppler.outputs.TERRAFORM_TOKEN }}" >> $GITHUB_ENV
 
-      - name: change to the infra directory
-        run: cd infra
-
       - name: terraform init
         run: |
+          cd infra
           terraform init
 
       - name: terraform plan
         run: |
+          cd infra
           terraform plan
 
   apply:

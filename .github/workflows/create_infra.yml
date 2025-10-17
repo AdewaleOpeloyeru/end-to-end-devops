@@ -5,7 +5,7 @@ on:
 
 jobs:
   plan:
-    name: plan and review infra creation
+    name: plan and review
     runs-on: ubuntu-latest
     steps:
       - name: checkout code

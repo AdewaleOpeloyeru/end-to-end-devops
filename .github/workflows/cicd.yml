@@ -4,29 +4,6 @@ on:
   push:
     branches:
       - '**'
-  #   paths-ignore:
-  #     - '.github/workflows/create_infra.yml'
-  #     - '.github/workflows/destroy_infra.yml'
-  #     - '.github/workflows/create_monitoring.yml'
-  #     - '.github/workflows/destroy_monitoring.yml'
-  #     - 'infra/**'
-  #     - 'monitoring/**'
-  #     - 'README.md'
-  #     - .gitignore
-  #     - 'LICENSE'
-  # pull_request:
-  #   branches:
-  #     - '**'
-  #   paths-ignore:
-  #     - '.github/workflows/create_infra.yml'
-  #     - '.github/workflows/destroy_infra.yml'
-  #     - '.github/workflows/create_monitoring.yml'
-  #     - '.github/workflows/destroy_monitoring.yml'
-  #     - 'infra/**'
-  #     - 'monitoring/**'
-  #     - 'README.md'
-  #     - .gitignore
-  #     - 'LICENSE'
     paths:
       - 'app/**'
   pull_request:
